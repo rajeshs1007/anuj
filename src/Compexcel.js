@@ -339,7 +339,7 @@ if (extraRowsInFile2.length > 0) {
               <div>
                 <label htmlFor="file1" className="ui icon button">
                   <i className="file icon"></i>
-                  Open File 1
+                 Open PORTFOLIO File
                 </label>
                 <input
                   type="file"
@@ -398,7 +398,7 @@ if (extraRowsInFile2.length > 0) {
               <div>
                 <label htmlFor="file2" className="ui icon button">
                   <i className="file icon"></i>
-                  Open File 2
+                  Open DPholding File
                 </label>
                 <input
                   type="file"
