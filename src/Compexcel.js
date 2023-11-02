@@ -462,9 +462,7 @@ if (extraRowsInFile2.length > 0) {
       )}
 
 
-// <Button positive onClick={handleDownload}>
-//         Download Result
-//       </Button> {/* Add the download button here */}
+
 
 
       <Table celled>
