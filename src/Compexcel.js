@@ -170,7 +170,7 @@ const App = () => {
       
       const isDiffCol1 = rowInFile2 === -1 || value1Col1 !== File2[rowInFile2][ColumnIndex3];
       const isDiffCol2 = rowInFile2 === -1 || value1Col2 !== File2[rowInFile2][ColumnIndex4];
-      const isDiffCol2Column = isDiffCol1 ? "Different" : "Same"; // Added column
+      const isDiffCol2Column = isDiffCol1 ? "Isin Different" : "Isin Same"; // Added column
 
       if (isDiffCol1 || isDiffCol2) {
         foundDifference = true;
@@ -464,9 +464,9 @@ if (extraRowsInFile2.length > 0) {
       )}
 
 
-<Button positive onClick={handleDownload}>
+{/* <Button positive onClick={handleDownload}>
         Download Result
-      </Button> {/* Add the download button here */}
+      </Button> Add the download button here */}
 
 
       <Table celled>
