@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import "semantic-ui-css/semantic.min.css";
 import "./App.css";
 import readXlsxFile from "read-excel-file";
-import * as XLSX from "xlsx"; // Import XLSX library
 
 import { Container, Grid, Segment } from "semantic-ui-react";
 import { Table, Button, Icon, Message } from "semantic-ui-react";
@@ -71,41 +70,6 @@ const App = () => {
     fillColumns();
   };
 
-
-
-
-
-
-  const findExtraRowsInFile2 = () => {
-    let extraRows = [];
-  
-    for (let i = 0; i < File2.length; i++) {
-      let isRowFound = false;
-  
-      for (let j = 0; j < File1.length; j++) {
-        const value2Col1 = File2[i][ColumnIndex3];
-        const value1Col1 = File1[j][ColumnIndex1];
-  
-        if (value2Col1 === value1Col1) {
-          isRowFound = true;
-          break;
-        }
-      }
-  
-      if (!isRowFound) {
-        extraRows.push(File2[i]);
-      }
-    }
-  
-    return extraRows;
-  };
-
-
-
-
-
-
-
   const ShowResult = () => {
     if (!file1Uploaded && !file2Uploaded) {
       alert("File 1 and File 2 are not uploaded.");
@@ -119,54 +83,35 @@ const App = () => {
     }
 
     let result = [];
-    let extraRowsInFile2 = findExtraRowsInFile2(); // Find extra rows in File 2
-    // let file2Column0Value = [];
-    // let num =[];
+    let file2Column0Value = [];
+
     for (let rowInd = 0; rowInd < File1.length; rowInd++) {
       const value1Col0 = File1[rowInd][ColumnIndex0File1];
       const value1Col1 = File1[rowInd][ColumnIndex1];
       const value1Col2 = File1[rowInd][ColumnIndex2];
-  
-      if (value1Col1 === 0) {
-        // Skip the row if the value in File1 column 2 is equal to 0
-        break;
-      }
+
       let foundDifference = false;
       let rowInFile2 = -1;
       let rownotFile2 = -1;
-      // let rowzero = -1;
 
       for (let i = 0; i < File2.length; i++) {
         if (File2[i] === undefined || File2[i][ColumnIndex2] === undefined) {
           continue;
         }
 
-        const value2Col0 = File2[i][ColumnIndex0File2];
+        
         const value2Col1 = File2[i][ColumnIndex3];
         const value2Col2 = File2[i][ColumnIndex4];
 
+        
 
-        if (value1Col1 === value2Col1 && value2Col0 && value2Col1 === value2Col1) {
+        if (value1Col1 === value2Col1) {
           rowInFile2 = i;
-          
         } else {
           rownotFile2 = i;
         }
-        // if(value2Col0)
-        // {
-        //   rowzero = i;
-          
-        // } 
       }
 
-      if (value1Col2 === 0 ) {
-        continue;
-      }
-
-      let diff = 0;
-      if (File2[rowInFile2] !== undefined) {
-          diff = value1Col2 - File2[rowInFile2][ColumnIndex4];
-      }
       
       const isDiffCol1 = rowInFile2 === -1 || value1Col1 !== File2[rowInFile2][ColumnIndex3];
       const isDiffCol2 = rowInFile2 === -1 || value1Col2 !== File2[rowInFile2][ColumnIndex4];
@@ -176,14 +121,13 @@ const App = () => {
         foundDifference = true;
       }
 
-     
+
       
 
 
 
 
       result.push(
-        
         <Table.Row key={rowInd}>
           <Table.Cell  key={rowInd + "0"}>
             
@@ -205,9 +149,9 @@ const App = () => {
             {isDiffCol2 ? <Icon name="arrow right" color="red" /> : null}
             {value1Col2 === "" ? "N/A" : value1Col2}
           </Table.Cell>
-            <Table.Cell className="truncate-cell" style={{ whiteSpace: "pre-line" }}>
+            <Table.Cell style={{ whiteSpace: "pre-line" }}>
               
-              {File2[rowInFile2]?File2[rowInFile2][ColumnIndex0File2]:File2[rownotFile2][ColumnIndex0File2]}
+              {file2Column0Value === "" ?"N/A":file2Column0Value}
             </Table.Cell>
           <Table.Cell
             error={isDiffCol1}
@@ -230,73 +174,13 @@ const App = () => {
             {File2[rowInFile2] ? File2[rowInFile2][ColumnIndex4] : File2[rownotFile2][ColumnIndex4]}
           </Table.Cell>
           <Table.Cell>{isDiffCol2Column}</Table.Cell> {/* Added header */}
-          <Table.Cell style={{ whiteSpace: "pre-line" }}>{diff}</Table.Cell>
         </Table.Row>
       );
     }
   
 
     setResult(result);
-
-
-if (extraRowsInFile2.length > 0) {
-    const extraRows = extraRowsInFile2.map((row, index) => (
-      <Table.Row key={`extra-row-${index}`} className="extra-row">
-        <Table.Cell key={`extra-cell-0`}>N/A</Table.Cell>  {/*// File 2 Column 0 */}
-         <Table.Cell key={`extra-cell-1`}>N/A</Table.Cell> {/* // File 2 Column 1 */}
-         <Table.Cell key={`extra-cell-2`}>N/A</Table.Cell>  {/*// File 2 Column 2 */}
-         <Table.Cell key={`extra-cell-3`}>{row[1]}</Table.Cell> {/* // File 1 Column 0 (show "N/A") */}
-         <Table.Cell key={`extra-cell-4`}>{row[0]}</Table.Cell> {/* // File 1 Column 1 (show "N/A") */}
-         <Table.Cell key={`extra-cell-5`}>{row[4]}</Table.Cell> {/* // File 1 Column 2 (show "N/A") */}
-      </Table.Row>
-    ));
-
-    setResult((prevResult) => [...prevResult, ...extraRows]);
-  }
-
-
   };
-
-
-
-
-
-  const handleDownload = () => {
-  if (Result.length === 0) {
-    alert("Result is empty. Nothing to download.");
-    return;
-  }
-
-  const data = [
-    ["File 1 Column 0", "File 1 Column 1", "File 1 Column 2", "File 2 Column 0", "File 2 Column 1", "File 2 Column 2", "Isin Diff", "Q Diff"]
-  ];
-
-  Result.forEach((row) => {
-    const file1Col0 = row.props.children[0]?.props?.children || "";
-    const file1Col1 = row.props.children[1]?.props?.children || "";
-    const file1Col2 = row.props.children[2]?.props?.children || "";
-    const file2Col0 = row.props.children[3]?.props?.children || "";
-    const file2Col1 = row.props.children[4]?.props?.children || "";
-    const file2Col2 = row.props.children[5]?.props?.children || "";
-    const isinDiff = row.props.children[6]?.props?.children || "";
-    const qDiff = row.props.children[7]?.props?.children || "";
-
-    data.push([file1Col0, file1Col1, file1Col2, file2Col0, file2Col1, file2Col2, isinDiff, qDiff]);
-  });
-
-  const ws = XLSX.utils.aoa_to_sheet(data);
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, "Comparison Result");
-  XLSX.writeFile(wb, "comparison_result.xlsx");
-};
-
-  
-  
-  
-
-
-
-
 
   const fillRows = () => {
     if (File1.length < File2.length) {
@@ -339,7 +223,7 @@ if (extraRowsInFile2.length > 0) {
               <div>
                 <label htmlFor="file1" className="ui icon button">
                   <i className="file icon"></i>
-                 Open PORTFOLIO File
+                  Open File 1
                 </label>
                 <input
                   type="file"
@@ -398,7 +282,7 @@ if (extraRowsInFile2.length > 0) {
               <div>
                 <label htmlFor="file2" className="ui icon button">
                   <i className="file icon"></i>
-                  Open DPholding File
+                  Open File 2
                 </label>
                 <input
                   type="file"
@@ -460,11 +344,6 @@ if (extraRowsInFile2.length > 0) {
           <Message.Header>File 2 is not uploaded!</Message.Header>
         </Message>
       )}
-
-
-
-
-
       <Table celled>
         <Table.Header>
           <Table.Row>
@@ -474,8 +353,7 @@ if (extraRowsInFile2.length > 0) {
             <Table.HeaderCell>File 2 Column {ColumnIndex0File2}</Table.HeaderCell>
             <Table.HeaderCell>File 2 Column {ColumnIndex3}</Table.HeaderCell>
             <Table.HeaderCell>File 2 Column {ColumnIndex4}</Table.HeaderCell>
-            <Table.HeaderCell>Isin Diff</Table.HeaderCell>
-            <Table.HeaderCell>Q Diff</Table.HeaderCell>
+            <Table.HeaderCell>Diff</Table.HeaderCell>
           </Table.Row>
         </Table.Header>
         <Table.Body>{Result}</Table.Body>
@@ -485,5 +363,3 @@ if (extraRowsInFile2.length > 0) {
 };
 
 export default App;
-
-
