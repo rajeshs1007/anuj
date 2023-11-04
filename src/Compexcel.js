@@ -125,7 +125,7 @@ const App = () => {
     let extraRowsInFile2 = findExtraRowsInFile2(); // Find extra rows in File 2
     // let file2Column0Value = [];
     // let num =[];
-    for (let rowInd = 3; rowInd < File1.length; rowInd++) {
+    for (let rowInd = 0; rowInd < File1.length; rowInd++) {
       const value1Col0 = File1[rowInd][ColumnIndex0File1];
       const value1Col1 = File1[rowInd][ColumnIndex1];
       const value1Col2 = File1[rowInd][ColumnIndex2];
