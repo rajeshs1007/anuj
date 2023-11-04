@@ -19,6 +19,7 @@ const App = () => {
   const [ColumnIndex0File2, setColumnIndex0File2] = useState(1); // Default to compare the first column of File 2
   const [file1Uploaded, setFile1Uploaded] = useState(false);
   const [file2Uploaded, setFile2Uploaded] = useState(false);
+  const [showDifferenceRows, setShowDifferenceRows] = useState(false);
 
   const handleFile = (e) => {
     const name = e.target.files[0].name;
@@ -102,7 +103,9 @@ const App = () => {
 
 
 
-
+  const handleShowDifferenceRows = () => {
+    setShowDifferenceRows(!showDifferenceRows);
+  };
 
 
 
@@ -122,11 +125,14 @@ const App = () => {
     let extraRowsInFile2 = findExtraRowsInFile2(); // Find extra rows in File 2
     // let file2Column0Value = [];
     // let num =[];
-    for (let rowInd = 0; rowInd < File1.length; rowInd++) {
+    for (let rowInd = 3; rowInd < File1.length; rowInd++) {
       const value1Col0 = File1[rowInd][ColumnIndex0File1];
       const value1Col1 = File1[rowInd][ColumnIndex1];
       const value1Col2 = File1[rowInd][ColumnIndex2];
   
+      if (value1Col0 === "" || value1Col1 === "" || value1Col2 === "") {
+        continue; // Skip the row
+      }
       if (value1Col1 === 0) {
         // Skip the row if the value in File1 column 2 is equal to 0
         break;
@@ -146,7 +152,7 @@ const App = () => {
         const value2Col2 = File2[i][ColumnIndex4];
 
 
-        if (value1Col1 === value2Col1 && value2Col0 && value2Col1 === value2Col1) {
+        if (value1Col1 === value2Col1 && value2Col0 && value2Col1 === value2Col1 ) {
           rowInFile2 = i;
           
         } else {
@@ -157,6 +163,7 @@ const App = () => {
         //   rowzero = i;
           
         // } 
+        
       }
 
       if (value1Col2 === 0 ) {
@@ -181,58 +188,58 @@ const App = () => {
 
 
 
-
-      result.push(
-        
-        <Table.Row key={rowInd}>
-          <Table.Cell  key={rowInd + "0"}>
+      if (!showDifferenceRows || foundDifference) 
+{    result.push(
+      
+      <Table.Row key={rowInd}>
+        <Table.Cell  key={rowInd + "0"}>
+          
+          {value1Col0 === "" ? "N/A" : value1Col0}
+        </Table.Cell>
+        <Table.Cell
+          error={isDiffCol1}
+          key={rowInd + "1"}
+          positive={!foundDifference && !value1Col1 ? true : false}
+        >
+          {isDiffCol1 ? <Icon name="arrow right" color="red" /> : null}
+          {value1Col1 === "" ? "N/A" : value1Col1}
+        </Table.Cell>
+        <Table.Cell
+          error={isDiffCol2}
+          key={rowInd + "2"}
+          positive={!foundDifference && !value1Col2 ? true : false}
+        >
+          {isDiffCol2 ? <Icon name="arrow right" color="red" /> : null}
+          {value1Col2 === "" ? "N/A" : value1Col2}
+        </Table.Cell>
+          <Table.Cell className="truncate-cell" style={{ whiteSpace: "pre-line" }}>
             
-            {value1Col0 === "" ? "N/A" : value1Col0}
+            {File2[rowInFile2]?File2[rowInFile2][ColumnIndex0File2]:File2[rownotFile2][ColumnIndex0File2]}
           </Table.Cell>
-          <Table.Cell
-            error={isDiffCol1}
-            key={rowInd + "1"}
-            positive={!foundDifference && !value1Col1 ? true : false}
-          >
-            {isDiffCol1 ? <Icon name="arrow right" color="red" /> : null}
-            {value1Col1 === "" ? "N/A" : value1Col1}
-          </Table.Cell>
-          <Table.Cell
-            error={isDiffCol2}
-            key={rowInd + "2"}
-            positive={!foundDifference && !value1Col2 ? true : false}
-          >
-            {isDiffCol2 ? <Icon name="arrow right" color="red" /> : null}
-            {value1Col2 === "" ? "N/A" : value1Col2}
-          </Table.Cell>
-            <Table.Cell className="truncate-cell" style={{ whiteSpace: "pre-line" }}>
-              
-              {File2[rowInFile2]?File2[rowInFile2][ColumnIndex0File2]:File2[rownotFile2][ColumnIndex0File2]}
-            </Table.Cell>
-          <Table.Cell
-            error={isDiffCol1}
-            key={rowInd + "3"}
-            positive={!foundDifference && !File2[rowInFile2] ? true : false}
-          >
-            {isDiffCol1 ? <Icon name="arrow right" color="green" /> : null}
-            {File2[rowInFile2]
-              ? File2[rowInFile2][ColumnIndex3]
-              : File2[rownotFile2][ColumnIndex3] !== File2[rowInFile2]
-              ? File2[rownotFile2][ColumnIndex3]
-              : "N/A"}
-          </Table.Cell>
-          <Table.Cell
-            error={isDiffCol2}
-            key={rowInd + "4"}
-            positive={!foundDifference && !File2[rowInFile2] && !File2[rownotFile2] ? true : false}
-          >
-            {isDiffCol2 ? <Icon name="arrow right" color="green" /> : null}
-            {File2[rowInFile2] ? File2[rowInFile2][ColumnIndex4] : File2[rownotFile2][ColumnIndex4]}
-          </Table.Cell>
-          <Table.Cell>{isDiffCol2Column}</Table.Cell> {/* Added header */}
-          <Table.Cell style={{ whiteSpace: "pre-line" }}>{diff}</Table.Cell>
-        </Table.Row>
-      );
+        <Table.Cell
+          error={isDiffCol1}
+          key={rowInd + "3"}
+          positive={!foundDifference && !File2[rowInFile2] ? true : false}
+        >
+          {isDiffCol1 ? <Icon name="arrow right" color="green" /> : null}
+          {File2[rowInFile2]
+            ? File2[rowInFile2][ColumnIndex3]
+            : File2[rownotFile2][ColumnIndex3] !== File2[rowInFile2]
+            ? File2[rownotFile2][ColumnIndex3]
+            : "N/A"}
+        </Table.Cell>
+        <Table.Cell
+          error={isDiffCol2}
+          key={rowInd + "4"}
+          positive={!foundDifference && !File2[rowInFile2] && !File2[rownotFile2] ? true : false}
+        >
+          {isDiffCol2 ? <Icon name="arrow right" color="green" /> : null}
+          {File2[rowInFile2] ? File2[rowInFile2][ColumnIndex4] : File2[rownotFile2][ColumnIndex4]}
+        </Table.Cell>
+        <Table.Cell>{isDiffCol2Column}</Table.Cell> {/* Added header */}
+        <Table.Cell style={{ whiteSpace: "pre-line" }}>{diff}</Table.Cell>
+      </Table.Row>
+    );}
     }
   
 
@@ -242,20 +249,24 @@ const App = () => {
 if (extraRowsInFile2.length > 0) {
     const extraRows = extraRowsInFile2.map((row, index) => (
       <Table.Row key={`extra-row-${index}`} className="extra-row">
-        <Table.Cell key={`extra-cell-0`}>N/A</Table.Cell>  {/*// File 2 Column 0 */}
-         <Table.Cell key={`extra-cell-1`}>N/A</Table.Cell> {/* // File 2 Column 1 */}
-         <Table.Cell key={`extra-cell-2`}>N/A</Table.Cell>  {/*// File 2 Column 2 */}
-         <Table.Cell key={`extra-cell-3`}>{row[1]}</Table.Cell> {/* // File 1 Column 0 (show "N/A") */}
-         <Table.Cell key={`extra-cell-4`}>{row[0]}</Table.Cell> {/* // File 1 Column 1 (show "N/A") */}
-         <Table.Cell key={`extra-cell-5`}>{row[4]}</Table.Cell> {/* // File 1 Column 2 (show "N/A") */}
+        <Table.Cell key={`extra-cell-0`} ><Icon name="arrow right" color="red" />N/A</Table.Cell>  {/*// File 2 Column 0 */}
+         <Table.Cell key={`extra-cell-1`}><Icon name="arrow right" color="red" />N/A</Table.Cell> {/* // File 2 Column 1 */}
+         <Table.Cell key={`extra-cell-2`}><Icon name="arrow right" color="red" />N/A</Table.Cell>  {/*// File 2 Column 2 */}
+         <Table.Cell key={`extra-cell-3`}><Icon name="arrow right" color="green" />{row[1]}</Table.Cell> {/* // File 1 Column 0 (show "N/A") */}
+         <Table.Cell key={`extra-cell-4`}><Icon name="arrow right" color="green" />{row[0]}</Table.Cell> {/* // File 1 Column 1 (show "N/A") */}
+         <Table.Cell key={`extra-cell-5`}><Icon name="arrow right" color="green" />{row[4]}</Table.Cell> {/* // File 1 Column 2 (show "N/A") */}
          <Table.Cell key={`extra-cell-6`}>Extra Row</Table.Cell>
          <Table.Cell key={`extra-cell-7`}>{row[4]}</Table.Cell>
       </Table.Row>
     ));
 
-    setResult((prevResult) => [...prevResult, ...extraRows]);
+    if (showDifferenceRows) {
+      result = [...result, ...extraRows];
+    } else {
+      result = [...result, ...extraRows];
+    }
   }
-
+  setResult(result);
 
   };
 
@@ -263,7 +274,7 @@ if (extraRowsInFile2.length > 0) {
 
 
 
-  const handleDownload = () => {
+const handleDownload = () => {
   if (Result.length === 0) {
     alert("Result is empty. Nothing to download.");
     return;
@@ -274,16 +285,20 @@ if (extraRowsInFile2.length > 0) {
   ];
 
   Result.forEach((row) => {
-    const file1Col0 = row.props.children[0]?.props?.children || "";
-    const file1Col1 = row.props.children[1]?.props?.children || "";
-    const file1Col2 = row.props.children[2]?.props?.children || "";
-    const file2Col0 = row.props.children[3]?.props?.children || "";
-    const file2Col1 = row.props.children[4]?.props?.children || "";
-    const file2Col2 = row.props.children[5]?.props?.children || "";
-    const isinDiff = row.props.children[6]?.props?.children || "";
-    const qDiff = row.props.children[7]?.props?.children || "";
+    const rowData = [];
+    for (let i = 0; i < 8; i++) {
+      const cellValue = row.props.children[i]?.props?.children;
 
-    data.push([file1Col0, file1Col1, file1Col2, file2Col0, file2Col1, file2Col2, isinDiff, qDiff]);
+      // Check the data type of the cell value
+      if (typeof cellValue === "number") {
+        // Handle numeric values
+        rowData.push(cellValue);
+      } else {
+        // Handle non-numeric (e.g., alphanumeric) values
+        rowData.push(cellValue || ""); // Ensure empty string for null values
+      }
+    }
+    data.push(rowData);
   });
 
   const ws = XLSX.utils.aoa_to_sheet(data);
@@ -291,6 +306,7 @@ if (extraRowsInFile2.length > 0) {
   XLSX.utils.book_append_sheet(wb, ws, "Comparison Result");
   XLSX.writeFile(wb, "comparison_result.xlsx");
 };
+
 
   
   
@@ -394,6 +410,14 @@ if (extraRowsInFile2.length > 0) {
                 </Button>
               </Button.Group>
             </Segment>
+            <label>
+        <input
+          type="checkbox"
+          checked={showDifferenceRows}
+          onChange={handleShowDifferenceRows}
+        />
+        Show Only Differences
+      </label>
           </Grid.Column>
           <Grid.Column textAlign="center">
             <Segment>
@@ -466,7 +490,11 @@ if (extraRowsInFile2.length > 0) {
 
 {/* <Button positive onClick={handleDownload}>
         Download Result
-      </Button> Add the download button here */}
+      </Button>  */}
+
+
+      
+
 
 
       <Table celled>
