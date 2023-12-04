@@ -21,15 +21,30 @@ const App = () => {
   const [file2Uploaded, setFile2Uploaded] = useState(false);
   const [showDifferenceRows, setShowDifferenceRows] = useState(false);
 
+  const [lastUploadedFile, setLastUploadedFile] = useState(null);
+
   const handleFile = (e) => {
     const name = e.target.files[0].name;
     const ext = name.substring(name.lastIndexOf(".") + 1);
     let ReadFile = e.target.files[0];
     let a = [];
-    if (!e || !e.target || !e.target.files || e.target.files.length === 0 || ext.toLowerCase() !== "xlsx") {
-      console.log("Invalid file");
+
+    if (!e || !e.target || !e.target.files || e.target.files.length === 0) {
+      alert("Invalid file. Please upload a valid file.");
+      window.location.reload(); // Refresh the page
       return;
     }
+
+    if (ext.toLowerCase() !== "xlsx") {
+      if (lastUploadedFile !== name) {
+        alert("Invalid file type. Please upload a valid Excel file (xlsx).");
+        setLastUploadedFile(name);
+        window.location.reload(); // Refresh the page
+      }
+      return;
+    }
+
+    setLastUploadedFile(null);
 
     if (e.target.id === "file1") {
       readXlsxFile(ReadFile).then((rows) => {
@@ -42,6 +57,7 @@ const App = () => {
         setFile1Uploaded(true);
       });
     }
+
     if (e.target.id === "file2") {
       readXlsxFile(ReadFile).then((rows) => {
         setFile2(rows);
@@ -55,6 +71,7 @@ const App = () => {
       });
     }
   };
+
 
   const handleCompare = () => {
     if (!file1Uploaded && !file2Uploaded) {
