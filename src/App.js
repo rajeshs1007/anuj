@@ -7,7 +7,7 @@ function App() {
   return (
     <div className="App">
       {/* <Excelf/> */}
-    <h2>Only Use .XLSX File to compare don't use any other File type</h2>
+    <h2> Don't use any other File type , Only Use .XLSX File to compare </h2>
       <Compexcel/>
     </div>
   );
